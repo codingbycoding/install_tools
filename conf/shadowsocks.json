@@ -1,0 +1,14 @@
+{
+    "server": "0.0.0.0",
+    "port_password": {
+        "10000": "passwd0",
+        "10001": "passwd1",
+        "10002": "passwd2",
+        "10003": "passwd3",
+        "10004": "passwd4",
+        "10005": "passwd5"
+    },
+    "timeout": 300,
+    "method": "aes-256-cfb"
+}
+
