@@ -1,5 +1,7 @@
 #!/bin/sh
 
+# all installations are base on CentOS 7
+
 declare -a PACKAGES=(base) 
 
 
@@ -73,6 +75,53 @@ nginx() {
     sudo firewall-cmd --reload
 
 }
+
+
+haproxy() {
+    wget http://www.haproxy.org/download/1.8/src/haproxy-1.8.3.tar.gz 
+    tar -zxvf haproxy-1.8.3.tar.gz
+    make TARGET=linux2628
+    sudo make install
+}
+
+
+docker() {
+    sudo yum remove docker docker-common docker-selinux docker-engine
+    # install Docker CE
+    sudo yum install -y yum-utils device-mapper-persistent-data lvm2
+
+    sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+
+
+    sudo yum list docker-ce --showduplicates | sort -r
+
+    # install the latest version
+    # sudo yum install docker-ce
+
+    # install a specific version
+    # docker-ce-17.06.1.ce
+
+    sudo systemctl start docker
+    sudo docker run hello-world
+
+
+    #{
+    #    "dns": ["8.8.8.8", "8.8.4.4"]
+    #}
+
+    sudo systemctl enable docker
+
+    # sudo nano /etc/docker/daemon.json
+
+
+    # uninstall docker ce
+
+    # sudo yum remove docker-ce
+    # sudo rm -rf /var/lib/docker
+
+}
+
+
 
 INSTALL_PACKAGES=${PACKAGES[@]}
 if ! [ -z ${INPUT_PACKAGES+x} ]; then
