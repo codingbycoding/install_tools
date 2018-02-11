@@ -63,8 +63,24 @@ htop() {
     sudo yum -y install htop
 }
 
+
+nvm() {
+    curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.8/install.sh | bash
+    nvm install node
+}
+
+
+nodejs() {
+    sudo yum -y install epel-release
+    sudo yum -y update
+    sudo yum -y install nodejs
+}
+
+
 nginx() {
     sudo yum -y install epel-release
+    sudo rpm -ivh http://nginx.org/packages/centos/7/noarch/RPMS/nginx-release-centos-7-0.el7.ngx.noarch.rpm
+
     sudo yum -y install nginx
 
     sudo systemctl start nginx
