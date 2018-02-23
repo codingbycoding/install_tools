@@ -1,5 +1,7 @@
 #!/bin/sh
 
+# all installations are base on CentOS 7
+
 declare -a PACKAGES=(base) 
 
 
@@ -61,8 +63,24 @@ htop() {
     sudo yum -y install htop
 }
 
+
+nvm() {
+    curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.8/install.sh | bash
+    nvm install node
+}
+
+
+nodejs() {
+    sudo yum -y install epel-release
+    sudo yum -y update
+    sudo yum -y install nodejs
+}
+
+
 nginx() {
     sudo yum -y install epel-release
+    sudo rpm -ivh http://nginx.org/packages/centos/7/noarch/RPMS/nginx-release-centos-7-0.el7.ngx.noarch.rpm
+
     sudo yum -y install nginx
 
     sudo systemctl start nginx
@@ -112,6 +130,51 @@ certbot() {
 
 request_ssl_through_certbot() {
     ./certbot-auto --nginx --register-unsafely-without-email
+}
+
+
+haproxy() {
+    wget http://www.haproxy.org/download/1.8/src/haproxy-1.8.3.tar.gz 
+    tar -zxvf haproxy-1.8.3.tar.gz
+    make TARGET=linux2628
+    sudo make install
+}
+
+
+docker() {
+    sudo yum remove docker docker-common docker-selinux docker-engine
+    # install Docker CE
+    sudo yum install -y yum-utils device-mapper-persistent-data lvm2
+
+    sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+
+
+    sudo yum list docker-ce --showduplicates | sort -r
+
+    # install the latest version
+    # sudo yum install docker-ce
+
+    # install a specific version
+    # docker-ce-17.06.1.ce
+
+    sudo systemctl start docker
+    sudo docker run hello-world
+
+
+    #{
+    #    "dns": ["8.8.8.8", "8.8.4.4"]
+    #}
+
+    sudo systemctl enable docker
+
+    # sudo nano /etc/docker/daemon.json
+
+
+    # uninstall docker ce
+
+    # sudo yum remove docker-ce
+    # sudo rm -rf /var/lib/docker
+
 }
 
 
