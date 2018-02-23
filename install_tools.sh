@@ -74,6 +74,47 @@ nginx() {
 
 }
 
+bbr() {
+    sudo rpm --import https://www.elrepo.org/RPM-GPG-KEY-elrepo.org
+    sudo rpm -Uvh http://www.elrepo.org/elrepo-release-7.0-2.el7.elrepo.noarch.rpm
+    sudo yum --enablerepo=elrepo-kernel install kernel-ml -y
+    rpm -qa | grep kernel
+    sudo egrep ^menuentry /etc/grub2.cfg | cut -f 2 -d \'
+    sudo grub2-set-default 1
+    # sudo shutdown -r now
+    uname -r
+
+    echo 'net.core.default_qdisc=fq' | sudo tee -a /etc/sysctl.conf
+    echo 'net.ipv4.tcp_congestion_control=bbr' | sudo tee -a /etc/sysctl.conf
+    sudo sysctl -p
+    sudo sysctl net.ipv4.tcp_available_congestion_control
+    # net.ipv4.tcp_available_congestion_control = bbr cubic reno
+
+    sudo sysctl -n net.ipv4.tcp_congestion_control
+    # output of previous command
+    # bbr
+
+    lsmod | grep bbr
+    # output of previous command
+    # tcp_bbr                16384  0
+}
+
+
+certbot() {
+    sudo yum -y install yum-utils
+    sudo yum-config-manager --enable rhui-REGION-rhel-server-extras rhui-REGION-rhel-server-optional
+    sudo yum -y install certbot-nginx
+
+    sudo certbot renew --dry-run
+    # renew in 90 days
+    #certbot renew
+}
+
+request_ssl_through_certbot() {
+    ./certbot-auto --nginx --register-unsafely-without-email
+}
+
+
 INSTALL_PACKAGES=${PACKAGES[@]}
 if ! [ -z ${INPUT_PACKAGES+x} ]; then
     INSTALL_PACKAGES=${INPUT_PACKAGES[@]}
