@@ -178,6 +178,12 @@ docker() {
 }
 
 
+frp() {
+    wget https://github.com/fatedier/frp/releases/download/v0.15.0/frp_0.15.0_linux_amd64.tar.gz
+    tar zxvf frp_0.15.0_linux_amd64.tar.gz 
+}
+
+
 INSTALL_PACKAGES=${PACKAGES[@]}
 if ! [ -z ${INPUT_PACKAGES+x} ]; then
     INSTALL_PACKAGES=${INPUT_PACKAGES[@]}
