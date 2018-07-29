@@ -2,14 +2,18 @@
 
 # all installations are base on CentOS 7
 
-declare -a PACKAGES=(base) 
+declare -a PACKAGES=()
 
+declare -a SUPPORTED_PKGS=(base shadowsocks htop nvm htop nvm nodejs nginx bbr certbot haproxy docker)
 
 POSITIONAL=()
 while [[ $# -gt 0 ]]
 do
 key="$1"
 
+echo_usage() {
+    echo "Usage:$0 -p pkg1 pkg2[${SUPPORTED_PKGS[@]}]"
+}
 case $key in
     -p|--pkg)
     INPUT_PACKAGES=()
@@ -18,6 +22,7 @@ case $key in
     while [[ -n $2 ]] && ! [[ $2 == "-"* ]]
     do
     INPUT_PACKAGES+=("$2")
+    #$2
     shift # past value
 
     done
@@ -26,6 +31,7 @@ case $key in
     *)    # unknown option
     POSITIONAL+=("$1") # save it in an array for later
     shift # past argument
+    echo_usage
     ;;
 esac
 done
@@ -38,7 +44,7 @@ base() {
 
 #install shadowssocks
 shadowsocks() {
-    sudo yum -y install python-setuptools  
+    sudo yum -y install python-setuptools
     sudo easy_install pip
 
 
@@ -86,7 +92,7 @@ nginx() {
     sudo systemctl start nginx
     sudo systemctl enable nginx
 
-    sudo firewall-cmd --permanent --zone=public --add-service=http 
+    sudo firewall-cmd --permanent --zone=public --add-service=http
     sudo firewall-cmd --permanent --zone=public --add-service=https
     sudo firewall-cmd --reload
 
@@ -134,7 +140,7 @@ request_ssl_through_certbot() {
 
 
 haproxy() {
-    wget http://www.haproxy.org/download/1.8/src/haproxy-1.8.3.tar.gz 
+    wget http://www.haproxy.org/download/1.8/src/haproxy-1.8.3.tar.gz
     tar -zxvf haproxy-1.8.3.tar.gz
     make TARGET=linux2628
     sudo make install
